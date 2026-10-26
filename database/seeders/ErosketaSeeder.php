@@ -29,7 +29,7 @@ class ErosketaSeeder extends Seeder
             $ekitaldia = Ekitaldia::where('izenburua', $izenburua)->firstOrFail();
 
             Erosketa::create([
-                'user_id'      => User::where('email', $emaila)->firstOrFail()->id,
+                'erabiltzailea_id'      => User::where('email', $emaila)->firstOrFail()->id,
                 'ekitaldia_id' => $ekitaldia->id,
                 'kantitatea'   => $kantitatea,
                 'guztira'      => $kantitatea * $ekitaldia->prezioa,

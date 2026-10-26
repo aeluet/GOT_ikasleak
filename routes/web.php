@@ -4,16 +4,19 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CharacterController;
 use App\Models\Ekitaldia;
+use App\Http\Controllers\EkitaldiaController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/demo/n1', function () {
-    //$ekitaldiak = Ekitaldia::all();
-    $ekitaldiak = Ekitaldia::with('kategoria')->get();
-    return view('demo.n1', compact('ekitaldiak'));
-});
+Route::get('/ekitaldia', [EkitaldiaController::class, 'index'])->name('ekitaldia.index');
+Route::get('/ekitaldia/create', [EkitaldiaController::class, 'create'])->name('ekitaldia.create');
+Route::post('/ekitaldia', [EkitaldiaController::class, 'store'])->name('ekitaldia.store');
+Route::get('/ekitaldia/{id}', [EkitaldiaController::class, 'show'])->name('ekitaldia.show');
+Route::get('/ekitaldia/{id}/edit', [EkitaldiaController::class, 'edit'])->name('ekitaldia.edit');
+Route::put('/ekitaldia/{id}', [EkitaldiaController::class, 'update'])->name('ekitaldia.update');
+Route::delete('/ekitaldia/{id}', [EkitaldiaController::class, 'destroy'])->name('ekitaldia.destroy');
 
 Route::get('/dashboard', [CharacterController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/submit', [CharacterController::class, 'create'])->middleware(['auth', 'verified'])->name('submit');

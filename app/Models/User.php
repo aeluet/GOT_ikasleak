@@ -31,4 +31,8 @@ class User extends Authenticatable
             'role' => UserRole::class,
         ];
     }
+
+    public function erosketak(){
+        return $this->hasMany(Erosketa::class);
+    }
 }

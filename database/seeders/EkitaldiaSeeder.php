@@ -32,7 +32,6 @@ class EkitaldiaSeeder extends Seeder
                 'aretoa'       => $aretoa,
                 'prezioa'      => $prezioa,
                 'edukiera'     => $edukiera,
-                'irudia'       => null,
             ]);
         }
         Ekitaldia::all()->each(fn($e) => collect(range(1,12))->each(fn() => $e->replicate()->save()));
