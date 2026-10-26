@@ -16,6 +16,7 @@ class Ekitaldia extends Model
         'prezioa',
         'edukiera',
         'kategoria_id',
+        'image_url',
     ];
 
     public function kategoria(){

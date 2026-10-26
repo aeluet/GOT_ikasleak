@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ekitaldia;
 use App\Models\Kategoria;
+use Illuminate\Support\Facades\Storage;
 
 class EkitaldiaController extends Controller
 {
@@ -33,13 +34,22 @@ class EkitaldiaController extends Controller
             'edukiera'     => 'required|integer|min:1',
             'prezioa'      => 'required|numeric|min:0',
             'kategoria_id' => 'required|exists:kategoriak,id',
+            'irudia'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        // 2. Irudia baldin badago, gorde eta bidea lortu
+        if ($request->hasFile('irudia')) {
+            // storage/app/public/ekitaldiak karpetan gordeko da eta bidea bueltatuko du
+            $path = $request->file('irudia')->store('ekitaldiak', 'public');
+            // Adibidez bidea: 'ekitaldiak/abc123xyz.jpg' -> /storage/ekitaldiak/abc123xyz.jpg
+            $validatedData['image_url'] = Storage::url($path);
+        }
 
         // 2. Datu-basean ekitaldi berria sortu
         Ekitaldia::create($validatedData);
 
         // 3. Ekitaldien zerrendara bideratu (flash mezu batekin)
-        return redirect()->route('ekitaldiak.show')
+        return redirect()->route('ekitaldia.show')
             ->with('success', 'Ekitaldia ondo sortu da!');
     }
 
@@ -62,6 +72,7 @@ class EkitaldiaController extends Controller
     }
 
     public function update($id, Request $request){
+
         $request->validate([
             'izenburua' => 'required|string|max:255',
             'aretoa' => 'required|string|max:255',
@@ -69,12 +80,26 @@ class EkitaldiaController extends Controller
             'data' => 'required|date',
             'prezioa' => 'required|numeric|min:0',
             'edukiera' => 'required|integer|min:1',
+            'irudia'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $ekitaldia = Ekitaldia::findOrFail($id);
-        $ekitaldia->update($request->all());
 
-        return redirect()->route('dashboard')->with('success', 'Ekitaldia ongi eguneratu da!');
+        if ($request->hasFile('irudia')) {
+            // Irudi zaharra ezabatu storage-tik lehendik bazegoen
+            if ($ekitaldia->image_url) {
+                $oldPath = str_replace('/storage/', '', $ekitaldia->image_url);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            // Irudi berria gorde
+            $path = $request->file('irudia')->store('ekitaldiak', 'public');
+            $validatedData['image_url'] = Storage::url($path);
+        }
+
+        $ekitaldia->update($validatedData);
+
+        return redirect()->route('ekitaldia.index')->with('success', 'Ekitaldia ongi eguneratu da!');
     }
 
     public function destroy($id){

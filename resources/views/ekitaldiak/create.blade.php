@@ -21,7 +21,7 @@
                 </div>
 
                 <!-- Formularioa -->
-                <form action="{{ route('ekitaldia.store') }}" method="POST" class="space-y-6">
+                <form action="{{ route('ekitaldia.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     <!-- Izena / Izenburua -->
@@ -101,6 +101,16 @@
                             @endforeach
                         </select>
                         @error('kategoria_id')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- IRUDIAREN INPUT BERRI HAU GEHITU -->
+                    <div>
+                        <label for="irudia" class="block text-sm font-medium text-gray-700">Ekitaldiaren Irudia</label>
+                        <input type="file" name="irudia" id="irudia" accept="image/*"
+                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        @error('irudia')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
